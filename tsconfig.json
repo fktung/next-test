@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "component/coba.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "component/coba.ts", "src/components/coba.tsx.bak"],
   "exclude": ["node_modules"]
 }

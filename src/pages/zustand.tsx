@@ -1,11 +1,18 @@
 import React from 'react'
-import { Controls, BearCounter } from '../../component/coba'
+import { Controls, BearCounter, ResetState, Users } from '../components/coba'
+interface zustandPage {
+  // BearCounter: () => void;
+  // Controls: () => void;
+}
 
-function Zustand() {
+const Zustand:React.FC<zustandPage> = () => {
   return (
     <div>
-        <BearCounter/>
-        <Controls />
+      Zustand
+      <BearCounter/>
+      <Controls />
+      <ResetState />
+      <Users />
     </div>
   )
 }
