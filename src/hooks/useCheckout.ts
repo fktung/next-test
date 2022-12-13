@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import create from 'zustand'
 
 interface IProductData {
@@ -10,34 +10,86 @@ interface IProductData {
   imageUrl: string;
 }
 interface IProduct {
-  checkout?: IProductData[]; isLoading: boolean;
+  checkout: { [id: string]: IProductData };
+  isLoading: boolean;
+}
+
+interface ITotal {
+  total: number
 }
 
 const checkoutStore = create<IProduct>((set) => ({
-  checkout : [],
+  checkout: {},
   isLoading: false
 }))
 
-export const useCheckout = () => {
-  const [getCheckout, setCheckout]:any = useState({})
-  const {checkout, isLoading} = checkoutStore.getState()
+const totalStore = create<ITotal>((set) => ({
+  total: 0
+}))
 
-  const setTroli = (el:IProductData) => {
-    setCheckout((state:IProduct) => ({...state, [el.id]:el}))
-  }
-  
-  
-  checkoutStore.setState({
-    checkout: getCheckout
+export const useTotal = () => {
+  const { total } = totalStore.getState()
+  const totalAry: number[] = []
+  const { checkout, isLoading } = checkoutStore.getState()
+  const totalTroly = useMemo(() => {
+    return Object.values(checkout).reduce((accumalator, val) => accumalator + val.price * val.quantity, 0)
+  }, [checkout])
+  totalStore.setState({
+    total: totalTroly
   })
-  console.log(checkout);
-  
-  // useEffect(() => {
-  //   console.log(getCheckout)
-  //   checkoutStore.setState({
-  //     checkout: getCheckout
-  //   })
-  // }, [getCheckout])
-
-  return {checkout, setTroli, checkoutStore}
+  return { totalTroly }
 }
+
+export const useCheckout = () => {
+  const { checkout, isLoading } = checkoutStore.getState()
+  const setTroli = (el: IProductData) => {
+    let cekProduct = { ...el }
+    if (cekProduct.quantity <= 0) {
+      alert('out of stock')
+      return;
+    }
+    if (checkout[el.id]) {
+      cekProduct = checkout[el.id]
+      cekProduct.quantity++
+      checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [cekProduct.id]: cekProduct } }))
+    }
+    else {
+      cekProduct.quantity = 1
+      checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [cekProduct.id]: cekProduct } }))
+    }
+
+
+  }
+  const minus = (el: IProductData) => {
+    let troly = { ...el }
+    if (troly.quantity <= 0) {
+      alert('out of stock')
+      return;
+    }
+    if (checkout[el.id]) {
+      troly = checkout[el.id]
+      troly.quantity--
+      console.log('minus', troly)
+      checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [troly.id]: troly } }))
+    }
+  }
+
+  const plus = (el: IProductData) => {
+    let troly = { ...el }
+    if (troly.quantity <= 0) {
+      alert('out of stock')
+      return;
+    }
+    if (checkout[el.id]) {
+      troly = checkout[el.id]
+      troly.quantity++
+      console.log('plus', troly)
+      checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [troly.id]: troly } }))
+    }
+  }
+
+  return { checkout, setTroli, isLoading, minus, plus }
+}
+
+
+

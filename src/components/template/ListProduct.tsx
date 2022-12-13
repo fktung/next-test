@@ -2,6 +2,7 @@ import { Box, Button, Card, CardBody, Flex, Text } from '@chakra-ui/react'
 import React from 'react'
 import {useProduct} from '../../hooks/useProduct';
 import {useCheckout} from '../../hooks/useCheckout';
+import {useUserV2} from '../../hooks/useUser'
 
 interface IProductData {
   id: string;
@@ -13,45 +14,31 @@ interface IProductData {
 }
 
 interface IAcumulation {
-  id?: IProductData
+  id?: { id?: IProductData };
 }
 
 export const ListProduct = () => {
-  const {getProduct, products, isLoading} = useProduct();
-  const {setTroli, checkoutStore} = useCheckout()
+  const {getProduct, productOut, products, isLoading} = useProduct();
+  const {setTroli} = useCheckout()
+  const {clikData} = useUserV2()
+  
 
-  const acumulation: any = products.reduce((data: IAcumulation, value: IProductData) => {
+  const acumulation: IAcumulation = products.reduce((data: IAcumulation, value: IProductData) => {
     return {...data, [value.id]: value};
   }, {})
   
-  const hendelSave = (e:any) => {
-    // console.log(e)
+  
+  const hendelSave = (e:IProductData) => {
     setTroli(e)
-    // checkoutStore.setState({
-    //   checkout: ((state:IAcumulation) => ({
-    //     ...state, [e.id]: e
-    //   }))
-    // })
+    productOut(e)
+    clikData()
   }
 
   return (
     <Box>
       <Flex flexWrap={'wrap'}>
         {
-          // products.map((row, index) => {
-          //   return (
-          //     <Card key={index} maxW={'20rem'} justifyContent={'center'}>
-          //       <CardBody>
-          //         <Text>{row.name}</Text>
-          //         <Text>{row.price}</Text>
-          //         <Text>{row.quantity}</Text>
-          //       </CardBody>
-          //     </Card>
-          //   )
-          // })
-          Object.entries(acumulation).map(([key,row], index) => {
-            // console.log(row);
-            
+          products.map((row, index) => {
             return (
               <Card key={index}>
                 <CardBody>

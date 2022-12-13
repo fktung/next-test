@@ -10,7 +10,7 @@ function product() {
         <Box w={'full'}>
           <ListProduct />
         </Box>
-        <Box w={'full'} maxW={'md'}>
+        <Box w={'full'} maxW={'md'} pb={'36'}>
           <Chekout />
         </Box>
       </Flex>

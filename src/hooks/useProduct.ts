@@ -16,30 +16,42 @@ interface IProduct {
 }
 
 const store = create<IProduct>((set) => ({
-  products : [],
+  products: [],
   isLoading: false
 }))
 
 export const useProduct = () => {
-  const [productState, setProductState] = useState([])
-  const {products, isLoading} = store.getState()
-
-  store.setState({ isLoading: true })
-  const getProduct = async () => {
-    const res = await Axios.get('http://localhost:3001/product')
-    const data = await res.data
-    setProductState(data)
-    // store.setState({
-    //   products: data
-    // })
-  }
-  store.setState({
-    products: productState
-  })
-
+  const products = store((e) => e.products)
+  const isLoading = store((e) => e.isLoading)
   useEffect(() => {
     getProduct()
   }, [])
 
-  return {getProduct, products, isLoading}
+  const getProduct = async () => {
+    store.setState({ isLoading: true })
+    const res = await Axios.get('http://localhost:3001/product')
+    const data = await res.data
+    store.setState({
+      products: data
+    })
+  }
+
+  const productOut = (e: IProductData) => {
+    // const {products} = store.getState()
+    // const products = store((e) => e.products)
+    if (e.quantity === 0) return;
+    // const result = { ...e }
+    // const prod = { ...products }
+    // result.quantity -= 1
+    products.forEach(row => {
+      if (row.id === e.id) {
+        row.quantity -= 1;
+        return
+      }
+    });
+    // e.quantity = e.quantity - 1
+  }
+
+
+  return { getProduct, productOut, products, isLoading }
 }
