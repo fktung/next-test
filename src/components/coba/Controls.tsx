@@ -37,14 +37,14 @@ export const Users = () => {
     <Button onClick={getUser}></Button>
     <Box>
 
-      {isLoading ? "Loading . . . ." : users?.map((e, idx)=>{
+      {/* {isLoading ? "Loading . . . ." : users?.map((e, idx)=>{
         return (
           <Box key={idx}>
           <Text >{e.name}</Text>
           <Text>{e.email}</Text>
           </Box>
         )
-      })}
+      })} */}
       <Text>
 
         {/* Name {user.name} */}

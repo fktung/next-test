@@ -16,37 +16,34 @@ export const useBearStore = create<IStore>(set => ({
   removeAllBears: () => set({ bears: 0 }),
 }))
 
-interface IAddress {
-  street: string;
-  suite: string
-  zipcode: string;
-}
-
-interface IUser {
-  email: string
+interface IProductData {
+  id: string;
   name: string;
-  address: IAddress;
+  description: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
 }
 
-interface UStore {
-  users: IUser[]; isLoading: boolean;
+interface IProduct {
+  users: IProductData[]; isLoading: boolean;
 }
-const store = create<UStore>(() => ({
-  users: [],
+
+const store = create<IProduct>((set) => ({
+  users : [],
   isLoading: false
 }))
-
-
 
 export const useUser = () => {
   const { users, isLoading } = store.getState()
 
   const getUser = async () => {
     store.setState({ isLoading: true })
-    const axiosResponse = await Axios.get('https://jsonplaceholder.typicode.com/users')
+    const axiosResponse = await Axios.get('http://localhost:3001/product')
     const data = await axiosResponse.data
+    console.log(data)
     store.setState({
-      users: await axiosResponse.data
+      users: data
     })
     // return data
   }
@@ -56,9 +53,7 @@ export const useUser = () => {
   //   users: getData
   // })
   useEffect(() => {
-
     getUser()
-
   }, [])
 
   return { users, isLoading, getUser }
