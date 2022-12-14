@@ -31,9 +31,13 @@ export const useTotal = () => {
   const { total } = totalStore.getState()
   const totalAry: number[] = []
   const { checkout, isLoading } = checkoutStore.getState()
-  const totalTroly = useMemo(() => {
-    return Object.values(checkout).reduce((accumalator, val) => accumalator + val.price * val.quantity, 0)
-  }, [checkout])
+  let totalTroly = 0
+  if (Object.values(checkout).length > 0) {
+    totalTroly = Object.values(checkout).reduce((accumalator, val) => accumalator + val.price * val.quantity, 0)
+    // totalTroly = useMemo(() => {
+    //   return Object.values(checkout).reduce((accumalator, val) => accumalator + val.price * val.quantity, 0)
+    // }, [checkout])
+  }
   totalStore.setState({
     total: totalTroly
   })
@@ -62,28 +66,30 @@ export const useCheckout = () => {
   }
   const minus = (el: IProductData) => {
     let troly = { ...el }
-    if (troly.quantity <= 0) {
+    if (troly.quantity - 1 < 0) {
       alert('out of stock')
       return;
     }
     if (checkout[el.id]) {
       troly = checkout[el.id]
+      if (troly.quantity <= 1) {
+        delete checkout[el.id]
+        return
+      }
       troly.quantity--
-      console.log('minus', troly)
       checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [troly.id]: troly } }))
     }
   }
 
   const plus = (el: IProductData) => {
     let troly = { ...el }
-    if (troly.quantity <= 0) {
-      alert('out of stock')
-      return;
-    }
+    // if (troly.quantity <= 0) {
+    //   alert('out of stock')
+    //   return;
+    // }
     if (checkout[el.id]) {
       troly = checkout[el.id]
       troly.quantity++
-      console.log('plus', troly)
       checkoutStore.setState((state) => ({ checkout: { ...state.checkout, [troly.id]: troly } }))
     }
   }

@@ -19,18 +19,17 @@ interface IAcumulation {
 
 export const ListProduct = () => {
   const {getProduct, productOut, products, isLoading} = useProduct();
-  const {setTroli} = useCheckout()
+  const {setTroli, checkout} = useCheckout()
   const {clikData} = useUserV2()
   
-
-  const acumulation: IAcumulation = products.reduce((data: IAcumulation, value: IProductData) => {
-    return {...data, [value.id]: value};
-  }, {})
+  // const acumulation: IAcumulation = products.reduce((data: IAcumulation, value: IProductData) => {
+  //   return {...data, [value.id]: value};
+  // }, {})
   
   
   const hendelSave = (e:IProductData) => {
     setTroli(e)
-    productOut(e)
+    // productOut(e)
     clikData()
   }
 
@@ -38,13 +37,23 @@ export const ListProduct = () => {
     <Box>
       <Flex flexWrap={'wrap'}>
         {
-          products.map((row, index) => {
+          products.map((row) => {
             return (
-              <Card key={index}>
+              <Card key={row.id}>
                 <CardBody>
                   <Text>{row.name}</Text>
                   <Text>{row.price}</Text>
-                  <Text>{row.quantity}</Text>
+                  {
+                    checkout[row.id] ? (
+                      <Text>
+                        {row.quantity - checkout[row.id].quantity}
+                      </Text>
+                    ) : (
+                      <Text>
+                        {row.quantity}
+                      </Text>
+                    )
+                  }
                   <Button onClick={() => {hendelSave(row)}} colorScheme='teal' size='xs'>
                     Button
                   </Button>
